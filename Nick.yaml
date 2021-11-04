@@ -1,0 +1,111 @@
+proxies:
+  - {name: SG(1), server: 172.67.54.213, port: 443, type: vmess, uuid: de461076-bc21-4b96-dfd4-8382fea86eb7, alterId: 0, cipher: auto, tls: true, skip-cert-verify: false, network: ws, ws-path: /xx, ws-headers: {Host: nickchan.xyz}}
+  - {name: SG(10), server: 104.18.152.205, port: 443, type: vmess, uuid: de461076-bc21-4b96-dfd4-8382fea86eb7, alterId: 0, cipher: auto, tls: true, skip-cert-verify: false, network: ws, ws-path: /xx, ws-headers: {Host: nickchan.xyz}}
+  - {name: SG(2), server: 104.18.255.145, port: 443, type: vmess, uuid: de461076-bc21-4b96-dfd4-8382fea86eb7, alterId: 0, cipher: auto, tls: true, skip-cert-verify: false, network: ws, ws-path: /xx, ws-headers: {Host: nickchan.xyz}}
+  - {name: SG(3), server: 104.19.51.80, port: 443, type: vmess, uuid: de461076-bc21-4b96-dfd4-8382fea86eb7, alterId: 0, cipher: auto, tls: true, skip-cert-verify: false, network: ws, ws-path: /xx, ws-headers: {Host: nickchan.xyz}}
+  - {name: SG(4), server: 104.19.143.79, port: 443, type: vmess, uuid: de461076-bc21-4b96-dfd4-8382fea86eb7, alterId: 0, cipher: auto, tls: true, skip-cert-verify: false, network: ws, ws-path: /xx, ws-headers: {Host: nickchan.xyz}}
+  - {name: SG(5), server: 104.25.183.101, port: 443, type: vmess, uuid: de461076-bc21-4b96-dfd4-8382fea86eb7, alterId: 0, cipher: auto, tls: true, skip-cert-verify: false, network: ws, ws-path: /xx, ws-headers: {Host: nickchan.xyz}}
+  - {name: SG(6), server: 104.18.71.221, port: 443, type: vmess, uuid: de461076-bc21-4b96-dfd4-8382fea86eb7, alterId: 0, cipher: auto, tls: true, skip-cert-verify: false, network: ws, ws-path: /xx, ws-headers: {Host: nickchan.xyz}}
+  - {name: SG(7), server: 104.19.110.157, port: 443, type: vmess, uuid: de461076-bc21-4b96-dfd4-8382fea86eb7, alterId: 0, cipher: auto, tls: true, skip-cert-verify: false, network: ws, ws-path: /xx, ws-headers: {Host: nickchan.xyz}}
+  - {name: SG(8), server: 104.18.223.155, port: 443, type: vmess, uuid: de461076-bc21-4b96-dfd4-8382fea86eb7, alterId: 0, cipher: auto, tls: true, skip-cert-verify: false, network: ws, ws-path: /xx, ws-headers: {Host: nickchan.xyz}}
+  - {name: SG(9), server: 104.17.217.77, port: 443, type: vmess, uuid: de461076-bc21-4b96-dfd4-8382fea86eb7, alterId: 0, cipher: auto, tls: true, skip-cert-verify: false, network: ws, ws-path: /xx, ws-headers: {Host: nickchan.xyz}}
+  - {name: piapiapia_ml, server: www.piapiapia.ml, port: 443, type: vmess, uuid: 53eb6817-e59e-4669-aadc-e87a54cca795, alterId: 0, cipher: auto, tls: true, skip-cert-verify: false, network: ws, ws-path: /login, ws-headers: {Host:  www.piapiapia.ml}}
+proxy-providers: null
+proxy-groups:
+  - name: Fallback
+    type: fallback
+    proxies:
+      - piapiapia_ml
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+  - name: PROXY
+    type: select
+    proxies:
+      - Fallback
+      - piapiapia_ml
+      - Media
+  - name: Media
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies:
+      - SG(1)
+      - SG(2)
+      - SG(3)
+      - SG(4)
+      - SG(5)
+      - SG(6)
+      - SG(7)
+      - SG(8)
+      - SG(9)
+      - SG(10)
+  - name: MATCH
+    type: select
+    proxies:
+      - PROXY
+      - DIRECT
+  - name: Streaming
+    type: select
+    proxies:
+      - Media
+      - Fallback
+  - name: StreamingSE
+    type: select
+    proxies:
+      - DIRECT
+rule-providers:
+  Unbreak:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Unbreak.yaml
+    url: https://gitlab.com/sishui/Profiles/-/raw/master/Clash/RuleSet/Unbreak.yaml
+    interval: 86400
+  Streaming:
+    type: http
+    behavior: classical
+    path: ./RuleSet/StreamingMedia/Streaming.yaml
+    url: https://gitlab.com/sishui/Profiles/-/raw/master/Clash/RuleSet/StreamingMedia/Streaming.yaml
+    interval: 86400
+  StreamingSE:
+    type: http
+    behavior: classical
+    path: ./RuleSet/StreamingMedia/StreamingSE.yaml
+    url: https://gitlab.com/sishui/Profiles/-/raw/master/Clash/RuleSet/StreamingMedia/StreamingSE.yaml
+    interval: 86400
+  Global:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Global.yaml
+    url: https://gitlab.com/sishui/Profiles/-/raw/master/Clash/RuleSet/Global.yaml
+    interval: 86400
+  China:
+    type: http
+    behavior: classical
+    path: ./RuleSet/China.yaml
+    url: https://gitlab.com/sishui/Profiles/-/raw/master/Clash/RuleSet/China.yaml
+    interval: 86400
+  ChinaIP:
+    type: http
+    behavior: ipcidr
+    path: ./RuleSet/Extra/ChinaIP.yaml
+    url: https://gitlab.com/sishui/Profiles/-/raw/master/Clash/RuleSet/Extra/ChinaIP.yaml
+    interval: 86400
+rules:
+  - RULE-SET,Unbreak,DIRECT
+  - RULE-SET,Streaming,Streaming
+  - RULE-SET,StreamingSE,StreamingSE
+  - RULE-SET,Global,PROXY
+  - RULE-SET,China,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,100.64.0.0/10,DIRECT
+  - IP-CIDR,224.0.0.0/4,DIRECT
+  - IP-CIDR,fe80::/10,DIRECT
+  - RULE-SET,ChinaIP,DIRECT
+  - IP-CIDR,119.28.28.28/32,DIRECT
+  - IP-CIDR,182.254.116.0/24,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,MATCH
